@@ -1,0 +1,10 @@
+{
+    "java.project.sourcePaths": [
+        "cnc_main2/src",
+        "cnc_main",
+        "cnc-java/src/main/java"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ]
+}
