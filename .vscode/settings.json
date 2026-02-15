@@ -1,10 +1,10 @@
 {
     "java.project.sourcePaths": [
-        "cnc_main2/src",
-        "cnc_main",
-        "cnc-java/src/main/java"
+        "cnc_main"
     ],
+    "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
+        "../lib/**/*.jar",
+        "lib/jSerialComm-2.11.4.jar"
     ]
 }
