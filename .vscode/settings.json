@@ -1,6 +1,7 @@
 {
     "java.project.sourcePaths": [
-        "cnc_main"
+        "cnc_main",
+        "cnc_main2/src/main/java/"
     ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
