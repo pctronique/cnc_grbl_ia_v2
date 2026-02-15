@@ -13,6 +13,7 @@ public class SerialManager {
     private BufferedWriter writer;
 
     private final BlockingQueue<String> responses = new LinkedBlockingQueue<>();
+    private final BlockingQueue<String> incoming = new LinkedBlockingQueue<>();
 
     public void connect(String portName, int baudRate) throws Exception {
 
@@ -39,7 +40,14 @@ public class SerialManager {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println("<< " + line);
-                    responses.put(line);
+                    incoming.put(line);
+                    //responses.put(line);
+                    MachineState state = MachineState.parse(line);
+                    if (state != null) {
+                        System.out.println("Etat: " + state.state +
+                                           " X=" + state.x +
+                                           " Y=" + state.y);
+                    }
                 }
             } catch (Exception e) {
                 System.out.println("Lecture arrêtée.");
@@ -47,6 +55,10 @@ public class SerialManager {
         });
         t.setDaemon(true);
         t.start();
+    }
+
+    public BlockingQueue<String> getIncomingQueue() {
+        return incoming;
     }
 
     public void send(String command) throws Exception {
@@ -61,6 +73,16 @@ public class SerialManager {
             if (response.equals("ok") || response.startsWith("error"))
                 return response;
         }
+    }
+    
+    public void sendRealtime(char c) throws Exception {
+        port.getOutputStream().write(c);
+        port.getOutputStream().flush();
+    }
+
+    public void reset() throws Exception {
+        port.getOutputStream().write(0x18);
+        port.getOutputStream().flush();
     }
 
     public void close() {

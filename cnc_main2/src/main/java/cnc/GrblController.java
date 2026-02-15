@@ -33,4 +33,20 @@ public class GrblController {
         serial.send("$H");
         serial.waitForOk();
     }
+    
+    public void pause() throws Exception {
+        serial.sendRealtime('!');
+    }
+
+    public void resume() throws Exception {
+        serial.sendRealtime('~');
+    }
+
+    public void status() throws Exception {
+        serial.sendRealtime('?');
+    }
+
+    public void reset() throws Exception {
+        serial.reset();
+    }
 }
