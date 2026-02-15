@@ -1,11 +1,12 @@
-package cnc;
+package ui;
 
+import cnc.*;
 import java.nio.file.Path;
 import java.util.Scanner;
 
-public class Main {
+public class ConsoleApp {
 
-    /*public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -54,5 +55,5 @@ public class Main {
                 }
             }
         }
-    }*/
+    }
 }

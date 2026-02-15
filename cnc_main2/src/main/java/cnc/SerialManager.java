@@ -1,9 +1,12 @@
 package cnc;
 
+import cnc.events.GrblListener;
 import com.fazecast.jSerialComm.SerialPort;
 
 import java.io.*;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class SerialManager {
@@ -14,6 +17,7 @@ public class SerialManager {
 
     private final BlockingQueue<String> responses = new LinkedBlockingQueue<>();
     private final BlockingQueue<String> incoming = new LinkedBlockingQueue<>();
+    private final List<GrblListener> listeners = new CopyOnWriteArrayList<>();
 
     public void connect(String portName, int baudRate) throws Exception {
 
@@ -41,8 +45,28 @@ public class SerialManager {
                 while ((line = reader.readLine()) != null) {
                     System.out.println("<< " + line);
                     incoming.put(line);
+                    
                     //responses.put(line);
+                    for (GrblListener l : listeners)
+                        l.onLineReceived(line);
+
                     MachineState state = MachineState.parse(line);
+                    
+                    if (state != null) {
+                        for (GrblListener l : listeners)
+                            l.onStateChanged(state);
+                    }
+
+                    if (line.startsWith("error")) {
+                        for (GrblListener l : listeners)
+                            l.onError(line);
+                    }
+                    
+                    if (line.startsWith("ALARM")) {
+                        for (GrblListener l : listeners)
+                            l.onError("ALARM détectée: " + line);
+                    }
+
                     if (state != null) {
                         System.out.println("Etat: " + state.state +
                                            " X=" + state.x +
@@ -73,6 +97,10 @@ public class SerialManager {
             if (response.equals("ok") || response.startsWith("error"))
                 return response;
         }
+    }
+
+    public void addListener(GrblListener listener) {
+        listeners.add(listener);
     }
     
     public void sendRealtime(char c) throws Exception {

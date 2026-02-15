@@ -26,6 +26,9 @@ public class GcodeSender {
                 .toList();
 
         Queue<Integer> pendingBytes = new LinkedList<>();
+        
+        long startTime = System.currentTimeMillis();
+        int totalLines = lines.size();
 
         int bufferUsed = 0;
         int lineIndex = 0;
@@ -49,14 +52,26 @@ public class GcodeSender {
 
             // Attendre réponse GRBL
             String response = incoming.take();
-
+            
             if (response.equals("ok")) {
                 bufferUsed -= pendingBytes.poll();
                 printProgress(lineIndex, lines.size());
+                /*int percent = (int)((lineIndex * 100.0)/totalLines);
+
+                long elapsed = System.currentTimeMillis() - startTime;
+                long estimatedTotal = (elapsed * totalLines) / lineIndex;
+                long remaining = estimatedTotal - elapsed;
+
+                for (GrblListener l : listeners)
+                    l.onFileProgress(percent);
+
+                System.out.print("\rProgression: " + percent +
+                                 "% | Temps restant: " +
+                                 (remaining / 1000) + "s");*/
             }
 
-            if (response.startsWith("error")) {
-                System.out.println("Erreur GRBL: " + response);
+            if (response.startsWith("error") || response.startsWith("ALARM")) {
+                System.out.println("Arrêt du job.");
                 break;
             }
         }
