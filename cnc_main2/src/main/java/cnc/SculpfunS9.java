@@ -1,6 +1,6 @@
 package cnc;
 
-import com.fazecast.jSerialComm.SerialPort;
+//import com.fazecast.jSerialComm.SerialPort;
 import java.io.*;
 
 public class SculpfunS9 {
